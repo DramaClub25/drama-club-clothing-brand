@@ -3,12 +3,12 @@ import Image from "next/image";
 
 export default function Header() {
   return (
-    <header className="absolute left-0 right-0 top-0 z-50 border-b border-white/10 bg-black/20 text-white backdrop-blur-sm">
-      <div className="flex h-24 items-center justify-between px-6 md:px-10 lg:px-14">
-        {/* Logo */}
+    <header className="absolute left-0 right-0 top-0 z-50 border-b border-white/10 bg-black/80 text-white backdrop-blur-sm">
+      <div className="flex h-20 items-center justify-between px-5 pt-2 md:h-24 md:px-10 md:pt-0 lg:px-14">
+          {/* Logo */}
         <Link href="/" className="shrink-0">
-            <div className="relative h-16 w-16 overflow-hidden rounded-full">
-            <Image
+          <div className="relative h-14 w-14 overflow-hidden rounded-full md:h-16 md:w-16">
+              <Image
                 src="/logo/whiteLogo.JPG"
                 alt="Drama Club"
                 fill
