@@ -49,7 +49,7 @@ export default function FeaturedCollections() {
       {/* Heading */}
       <div className="mb-10 text-center">
         <p className="mb-3 text-xs uppercase tracking-[0.35em] text-black/50">
-          Drama Club Brand x Accessories
+          Drama Club Brand Clothing x Accessories
         </p>
 
         <h2 className="font-serif text-4xl md:text-5xl">

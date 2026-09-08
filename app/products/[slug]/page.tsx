@@ -1,6 +1,8 @@
 import Link from "next/link";
 import ProductGallery from "@/components/products/ProductGallery";
 import { merchProducts } from "@/data/merch";
+import ProductOptions from "@/components/products/ProductOptions";
+import CartLink from "@/components/cart/CartLink";
 
 export default async function ProductPage({
   params,
@@ -44,7 +46,8 @@ export default async function ProductPage({
           },
         ];
 
-  const sizes = product.sizes ?? ["S", "M", "L", "XL"];
+const sizes = product.sizes ?? [];
+
 
   return (
     <main className="bg-black text-white">
@@ -58,12 +61,8 @@ export default async function ProductPage({
             ← Back to Shop
           </Link>
 
-          <Link
-            href="/cart"
-            className="text-xs uppercase tracking-[0.2em] text-white/60 transition hover:text-white"
-          >
-            Cart
-          </Link>
+          <CartLink />
+
         </div>
       </header>
 
@@ -98,55 +97,15 @@ export default async function ProductPage({
                 "Drama Club Brand Clothing and Accessories."}
             </p>
 
-            {/* SIZE */}
-            <div className="mt-10">
-              <div className="mb-4 flex items-center justify-between">
-                <p className="text-xs uppercase tracking-[0.2em]">
-                  Select Size
-                </p>
-
-                <button className="text-xs text-white/40 underline underline-offset-4">
-                  Size Guide
-                </button>
-              </div>
-
-              <div className="grid grid-cols-4 gap-2">
-                {sizes.map((size) => (
-                  <button
-                    key={size}
-                    className="border border-white/20 py-4 text-sm transition hover:border-white hover:bg-white hover:text-black"
-                  >
-                    {size}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* QUANTITY */}
-            <div className="mt-8">
-              <p className="mb-4 text-xs uppercase tracking-[0.2em]">
-                Quantity
-              </p>
-
-              <div className="flex w-fit items-center border border-white/20">
-                <button className="px-5 py-3 text-lg text-white/60 transition hover:text-white">
-                  −
-                </button>
-
-                <span className="min-w-12 text-center text-sm">
-                  1
-                </span>
-
-                <button className="px-5 py-3 text-lg text-white/60 transition hover:text-white">
-                  +
-                </button>
-              </div>
-            </div>
-
-            {/* ADD TO CART */}
-            <button className="mt-8 w-full bg-white px-8 py-5 text-sm font-medium uppercase tracking-[0.2em] text-black transition hover:bg-white/80">
-              Add to Cart
-            </button>
+            <ProductOptions
+                product={{
+                  id: product.slug,
+                  name: product.name,
+                  price: product.price,
+                  image: product.image,
+                }}
+                sizes={sizes}
+              />
 
             {/* DETAILS */}
             <div className="mt-10 border-t border-white/10">

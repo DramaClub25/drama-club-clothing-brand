@@ -12,7 +12,7 @@ export default function BrandStory() {
           </p> */}
 
           <h2 className="font-serif text-4xl leading-tight md:text-5xl lg:text-6xl">
-            Drama Club Brand
+            Drama Club Brand Clothing x Accessories
             <br />
             <span className="text-[#c8a84e]">and the Hyena</span>
           </h2>
