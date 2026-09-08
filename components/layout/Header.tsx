@@ -123,7 +123,7 @@ export default function Header() {
         <div className="flex min-h-screen flex-col px-6 pb-12 pt-32">
           <div className="mb-10">
             <p className="text-xs uppercase tracking-[0.35em] text-white/40">
-              Drama Club Brand
+              Drama Club Brand Clothing x Accessories
             </p>
             <div className="mt-4 h-px w-12 bg-white/40" />
           </div>
