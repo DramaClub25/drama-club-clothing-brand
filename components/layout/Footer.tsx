@@ -19,6 +19,10 @@ export default function Footer() {
                 Shop
               </Link>
 
+              <Link href="/gift-card" className="transition hover:text-white">
+                Gift Cards
+              </Link>
+
               <Link
                 href="/collections"
                 className="transition hover:text-white"
@@ -73,26 +77,41 @@ export default function Footer() {
             </nav>
           </div>
 
-                    {/* Social */}
-          <div>
-            <h3 className="mb-5 font-serif text-lg uppercase">
-              Follow Us
-            </h3>
+      {/* Social */}
+      <div>
+        <h3 className="mb-5 font-serif text-lg uppercase">
+          Follow Us
+        </h3>
 
-            <div className="flex gap-5 text-sm text-white/60">
-              <a href="#" className="transition hover:text-white">
-                Instagram
-              </a>
+        <div className="flex gap-5 text-sm text-white/60">
+          <a
+            href="https://www.instagram.com/dramaclubbrand25/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="transition hover:text-white"
+          >
+            Instagram
+          </a>
 
-              <a href="#" className="transition hover:text-white">
-                Facebook
-              </a>
+          <a
+            href="https://www.facebook.com/profile.php?id=100093696296523"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="transition hover:text-white"
+          >
+            Facebook
+          </a>
 
-              <a href="#" className="transition hover:text-white">
-                TikTok
-              </a>
-            </div>
-          </div>
+          <a
+            href="https://www.youtube.com/@TheBBoyStance-jw9ik"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="transition hover:text-white"
+          >
+            YouTube
+          </a>
+        </div>
+      </div>
 
           {/* Logo */}
           <div className="flex flex-col items-start md:items-center">
