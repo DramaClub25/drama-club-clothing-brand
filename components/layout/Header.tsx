@@ -114,13 +114,22 @@ export default function Header() {
 
       {/* Mobile Menu */}
       <div
-        className={`fixed inset-0 z-40 bg-black text-white transition-all duration-300 md:hidden ${
+        className={`fixed inset-0 z-[60] bg-black text-white transition-all duration-300 md:hidden ${
           menuOpen
             ? "visible opacity-100"
             : "invisible opacity-0"
         }`}
       >
-        <div className="flex min-h-screen flex-col px-6 pb-12 pt-32">
+        <div className="relative flex min-h-screen flex-col px-6 pb-12 pt-28">
+          <button
+            type="button"
+            onClick={closeMenu}
+            aria-label="Close menu"
+            className="absolute right-6 top-7 flex h-10 w-10 items-center justify-center"
+          >
+            <span className="absolute h-px w-7 rotate-45 bg-white" />
+            <span className="absolute h-px w-7 -rotate-45 bg-white" />
+          </button>
           <div className="mb-10">
             <p className="text-xs uppercase tracking-[0.35em] text-white/40">
               Drama Club Brand Clothing x Accessories
