@@ -106,7 +106,7 @@ export default function Footer() {
             </Link>
 
             <p className="mt-4 text-center text-xs text-white/50">
-              © {new Date().getFullYear()} Drama Club Brand
+              © {new Date().getFullYear()}  Drama Club Brand x Accessories
               <br />
               All Rights Reserved.
             </p>

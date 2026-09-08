@@ -43,7 +43,7 @@ export default function FeaturedProducts() {
         <div className="mb-12 flex items-end justify-between">
           <div>
             <p className="mb-3 text-xs uppercase tracking-[0.35em] text-white/50">
-              Shop Drama Club
+              Shop Drama Club Brand x Accessories
             </p>
 
             <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl">

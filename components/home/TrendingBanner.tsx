@@ -11,7 +11,7 @@ export default function TrendingBanner() {
         <div className="mb-8 flex items-center justify-center gap-4">
           <span className="h-px w-10 bg-white/30" />
           <p className="text-[10px] uppercase tracking-[0.4em] text-white/60 md:text-xs">
-            Drama Club Brand
+            Drama Club Brand x Accessories
           </p>
           <span className="h-px w-10 bg-white/30" />
         </div>
