@@ -18,13 +18,12 @@ export default function Home() {
       </div>
 
       <TrendingBanner />
-      
-
-      <BrandStory />
 
       <FeaturedCollections />
 
       <FeaturedProducts />
+
+      <BrandStory />
 
       <Newsletter />
 
