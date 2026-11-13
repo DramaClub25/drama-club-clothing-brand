@@ -28,7 +28,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Drama Club Brand",
     description: "New Pieces. Signature Style.",
-    url: "https://www.dramaclubbrand.com",
+    // url: "https://www.dramaclubbrand.com",
     siteName: "Drama Club Brand",
     images: [
       {
