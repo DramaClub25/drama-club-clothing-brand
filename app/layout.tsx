@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     siteName: "Drama Club Brand",
     images: [
       {
-        url: "/og-image.jpg",
+        url: "/whiteLogo.JPG",
         width: 1200,
         height: 630,
         alt: "Drama Club Brand",
@@ -46,7 +46,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Drama Club Brand",
     description: "New Pieces. Signature Style.",
-    images: ["/og-image.jpg"],
+    images: ["/whiteLogo.JPG"],
   },
 };
 
