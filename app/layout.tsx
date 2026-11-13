@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  // metadataBase: new URL("https://www.dramaclubbrand.com"),
+  metadataBase: new URL("https://www.dramaclubbrand.com"),
 
   title: {
     default: "Drama Club Brand | New Pieces. Signature Style.",
