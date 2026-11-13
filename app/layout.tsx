@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://www.dramaclubbrand.com"),
+  // metadataBase: new URL("https://www.dramaclubbrand.com"),
 
   title: {
     default: "Drama Club Brand | New Pieces. Signature Style.",
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Drama Club Brand",
     description: "New Pieces. Signature Style.",
-    // url: "https://www.dramaclubbrand.com",
+    url: "https://www.dramaclubbrand.com",
     siteName: "Drama Club Brand",
     images: [
       {
