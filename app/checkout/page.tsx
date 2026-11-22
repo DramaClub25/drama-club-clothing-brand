@@ -1,12 +1,46 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import Image from "next/image";
 import { useCart } from "@/components/cart/CartContext";
 import Footer from "@/components/layout/Footer";
 
 export default function CheckoutPage() {
-  const { items, cartTotal } = useCart();
+const { items, cartTotal } = useCart();
+
+const [isLoading, setIsLoading] = useState(false);
+const [error, setError] = useState("");
+
+const handleCheckout = async () => {
+  setIsLoading(true);
+  setError("");
+
+  try {
+    const response = await fetch("/api/checkout", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ items }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || !data.url) {
+      throw new Error(data.error || "Unable to start checkout.");
+    }
+
+    window.location.href = data.url;
+  } catch (err) {
+    setError(
+      err instanceof Error
+        ? err.message
+        : "Something went wrong. Please try again."
+    );
+    setIsLoading(false);
+  }
+};
 
   if (items.length === 0) {
     return (
@@ -205,18 +239,24 @@ export default function CheckoutPage() {
             <section>
               <button
                 type="button"
-                className="w-full bg-white px-8 py-5 text-sm font-medium uppercase tracking-[0.2em] text-black transition hover:bg-white/80"
+                onClick={handleCheckout}
+                disabled={isLoading}
+                className="w-full bg-white px-8 py-5 text-sm font-medium uppercase tracking-[0.2em] text-black transition hover:bg-white/80 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                Place Order
+                {isLoading ? "Redirecting to Stripe..." : "Place Order"}
               </button>
 
+              {error && (
+                <p className="mt-4 text-center text-sm text-red-400">
+                  {error}
+                </p>
+              )}
+
               <p className="mt-4 text-center text-xs leading-5 text-white/30">
-                Payment processing and order confirmation will be
-                connected during the production setup.
+                Secure checkout powered by Stripe.
               </p>
             </section>
-          </div>
-
+              </div>
           {/* ORDER SUMMARY */}
           <aside className="h-fit border border-white/10 p-6 md:p-8 lg:sticky lg:top-8">
             <p className="text-xs uppercase tracking-[0.25em] text-white/40">
