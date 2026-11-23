@@ -64,8 +64,8 @@ export default function RootLayout({
       className="h-full antialiased"
     >
       <body className="min-h-full flex flex-col">
-        {/* <CartProvider>{children}</CartProvider> */}
-        <UnderConstruction />
+        <CartProvider>{children}</CartProvider>
+        {/* <UnderConstruction /> */}
       </body>
     </html>
   );
