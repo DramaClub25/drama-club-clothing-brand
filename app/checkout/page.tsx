@@ -1,46 +1,53 @@
+
 "use client";
 
 import Link from "next/link";
 import { useState } from "react";
 import Image from "next/image";
+import { ShoppingBag } from "lucide-react";
 import { useCart } from "@/components/cart/CartContext";
 import Footer from "@/components/layout/Footer";
 
 export default function CheckoutPage() {
-const { items, cartTotal } = useCart();
+  const { items, cartTotal } = useCart();
 
-const [isLoading, setIsLoading] = useState(false);
-const [error, setError] = useState("");
+  const cartCount = items.reduce(
+    (total, item) => total + item.quantity,
+    0
+  );
 
-const handleCheckout = async () => {
-  setIsLoading(true);
-  setError("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  try {
-    const response = await fetch("/api/checkout", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ items }),
-    });
+  const handleCheckout = async () => {
+    setIsLoading(true);
+    setError("");
 
-    const data = await response.json();
+    try {
+      const response = await fetch("/api/checkout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ items }),
+      });
 
-    if (!response.ok || !data.url) {
-      throw new Error(data.error || "Unable to start checkout.");
+      const data = await response.json();
+
+      if (!response.ok || !data.url) {
+        throw new Error(data.error || "Unable to start checkout.");
+      }
+
+      window.location.href = data.url;
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Something went wrong. Please try again."
+      );
+      setIsLoading(false);
     }
-
-    window.location.href = data.url;
-  } catch (err) {
-    setError(
-      err instanceof Error
-        ? err.message
-        : "Something went wrong. Please try again."
-    );
-    setIsLoading(false);
-  }
-};
+  };
 
   if (items.length === 0) {
     return (
@@ -89,15 +96,31 @@ const handleCheckout = async () => {
       <header className="border-b border-white/10">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
           <Link
-            href="/cart"
+            href="/shop"
             className="text-xs uppercase tracking-[0.2em] text-white/60 transition hover:text-white"
           >
-            ← Back to Cart
+            Continue Shopping
           </Link>
 
           <p className="text-xs uppercase tracking-[0.25em]">
             Checkout
           </p>
+
+          <Link
+            href="/cart"
+            aria-label={`View cart, ${cartCount} items`}
+            className="relative flex items-center gap-2 text-white/70 transition hover:text-white"
+          >
+            <ShoppingBag size={21} strokeWidth={1.5} />
+
+            <span className="text-xs uppercase tracking-wider">
+              Cart
+            </span>
+
+            <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-white px-1 text-[10px] font-medium text-black">
+              {cartCount}
+            </span>
+          </Link>
         </div>
       </header>
 
@@ -114,136 +137,47 @@ const handleCheckout = async () => {
         </div>
 
         <div className="grid gap-12 lg:grid-cols-[1fr_400px]">
-          {/* FORM */}
-          <div className="space-y-12">
-            {/* CONTACT */}
-            <section>
-              <div className="mb-6">
-                <p className="text-xs uppercase tracking-[0.3em] text-white/40">
-                  01
-                </p>
+          {/* CHECKOUT INFORMATION */}
+          <div className="flex flex-col justify-center">
+            <div className="max-w-xl">
+              <p className="text-xs uppercase tracking-[0.3em] text-white/40">
+                Secure Payment
+              </p>
 
-                <h2 className="mt-2 font-serif text-3xl">
-                  Contact Information
-                </h2>
-              </div>
+              <h2 className="mt-4 font-serif text-3xl sm:text-4xl">
+                Almost Yours.
+              </h2>
 
-              <div className="space-y-4">
-                <input
-                  type="email"
-                  placeholder="Email Address"
-                  className="w-full border border-white/20 bg-transparent px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-white"
-                />
+              <p className="mt-5 text-sm leading-7 text-white/60">
+                Your items are ready. Continue to our secure checkout
+                powered by Stripe to enter your contact information
+                and shipping address and complete your purchase.
+              </p>
 
-                <input
-                  type="tel"
-                  placeholder="Phone Number"
-                  className="w-full border border-white/20 bg-transparent px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-white"
-                />
-              </div>
-            </section>
-
-            {/* SHIPPING */}
-            <section>
-              <div className="mb-6">
-                <p className="text-xs uppercase tracking-[0.3em] text-white/40">
-                  02
-                </p>
-
-                <h2 className="mt-2 font-serif text-3xl">
-                  Shipping Address
-                </h2>
-              </div>
-
-              <div className="space-y-4">
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <input
-                    type="text"
-                    placeholder="First Name"
-                    className="w-full border border-white/20 bg-transparent px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-white"
-                  />
-
-                  <input
-                    type="text"
-                    placeholder="Last Name"
-                    className="w-full border border-white/20 bg-transparent px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-white"
-                  />
-                </div>
-
-                <input
-                  type="text"
-                  placeholder="Address"
-                  className="w-full border border-white/20 bg-transparent px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-white"
-                />
-
-                <input
-                  type="text"
-                  placeholder="Apartment, Suite, etc. (Optional)"
-                  className="w-full border border-white/20 bg-transparent px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-white"
-                />
-
-                <div className="grid gap-4 sm:grid-cols-3">
-                  <input
-                    type="text"
-                    placeholder="City"
-                    className="w-full border border-white/20 bg-transparent px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-white"
-                  />
-
-                  <input
-                    type="text"
-                    placeholder="State"
-                    className="w-full border border-white/20 bg-transparent px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-white"
-                  />
-
-                  <input
-                    type="text"
-                    placeholder="ZIP Code"
-                    className="w-full border border-white/20 bg-transparent px-5 py-4 text-sm text-white outline-none placeholder:text-white/30 focus:border-white"
-                  />
-                </div>
-              </div>
-            </section>
-
-            {/* SHIPPING METHOD */}
-            <section>
-              <div className="mb-6">
-                <p className="text-xs uppercase tracking-[0.3em] text-white/40">
-                  03
-                </p>
-
-                <h2 className="mt-2 font-serif text-3xl">
-                  Delivery
-                </h2>
-              </div>
-
-              <div className="border border-white/20 p-5">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm">
-                      Standard Shipping
-                    </p>
-
-                    <p className="mt-1 text-xs text-white/40">
-                      Shipping calculated based on order
-                    </p>
-                  </div>
+              <div className="mt-8 border border-white/10 p-5">
+                <div className="flex items-center gap-3">
+                  <ShoppingBag size={20} strokeWidth={1.5} />
 
                   <p className="text-sm">
-                    Calculated later
+                    {cartCount} {cartCount === 1 ? "item" : "items"} in your bag
                   </p>
                 </div>
-              </div>
-            </section>
 
-            {/* PLACE ORDER */}
-            <section>
+                <p className="mt-3 text-xs leading-6 text-white/40">
+                  Your shipping details will be collected during the
+                  secure payment process.
+                </p>
+              </div>
+
               <button
                 type="button"
                 onClick={handleCheckout}
                 disabled={isLoading}
-                className="w-full bg-white px-8 py-5 text-sm font-medium uppercase tracking-[0.2em] text-black transition hover:bg-white/80 disabled:cursor-not-allowed disabled:opacity-50"
+                className="mt-8 w-full bg-white px-8 py-5 text-sm font-medium uppercase tracking-[0.2em] text-black transition hover:bg-white/80 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                {isLoading ? "Redirecting to Stripe..." : "Place Order"}
+                {isLoading
+                  ? "Redirecting to Stripe..."
+                  : "Continue to Payment"}
               </button>
 
               {error && (
@@ -255,8 +189,9 @@ const handleCheckout = async () => {
               <p className="mt-4 text-center text-xs leading-5 text-white/30">
                 Secure checkout powered by Stripe.
               </p>
-            </section>
-              </div>
+            </div>
+          </div>
+
           {/* ORDER SUMMARY */}
           <aside className="h-fit border border-white/10 p-6 md:p-8 lg:sticky lg:top-8">
             <p className="text-xs uppercase tracking-[0.25em] text-white/40">
@@ -353,6 +288,7 @@ const handleCheckout = async () => {
           </p>
         </div>
       </section>
+
       <Footer />
     </main>
   );
