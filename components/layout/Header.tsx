@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
+import { useCart } from "@/components/cart/CartContext";
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -10,6 +11,8 @@ export default function Header() {
   const closeMenu = () => {
     setMenuOpen(false);
   };
+
+  const { cartCount } = useCart();
 
   return (
     <>
@@ -79,9 +82,9 @@ export default function Header() {
                 />
               </svg>
 
-              <span className="absolute -right-2 -top-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-white px-1 text-[9px] text-black">
-                0
-              </span>
+            <span className="absolute -right-2 -top-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-white px-1 text-[9px] text-black">
+              {cartCount}
+            </span>
             </Link>
 
             {/* Menu Button */}

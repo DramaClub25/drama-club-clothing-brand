@@ -2,6 +2,7 @@
 import Link from "next/link";
 import Stripe from "stripe";
 import { CheckCircle2, Package } from "lucide-react";
+import ClearCartOnSuccess from "@/components/cart/ClearCartOnSuccess";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
@@ -76,6 +77,7 @@ export default async function CheckoutSuccessPage({
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-black px-6 py-20 text-white">
+       <ClearCartOnSuccess />
       <div className="w-full max-w-xl text-center">
         <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full border border-white/20">
           <CheckCircle2 size={40} strokeWidth={1.2} />

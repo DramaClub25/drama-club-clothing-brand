@@ -6,6 +6,7 @@ import {
   useEffect,
   useMemo,
   useState,
+  useCallback,
   type ReactNode,
 } from "react";
 
@@ -22,14 +23,11 @@ type CartContextType = {
   items: CartItem[];
   addToCart: (item: Omit<CartItem, "quantity">, quantity?: number) => void;
   removeFromCart: (id: string, size?: string) => void;
-  updateQuantity: (
-    id: string,
-    quantity: number,
-    size?: string
-  ) => void;
+  updateQuantity: (id: string, quantity: number, size?: string) => void;
   clearCart: () => void;
   cartCount: number;
   cartTotal: number;
+  isLoaded: boolean;
 };
 
 const CartContext = createContext<CartContextType | undefined>(
@@ -126,9 +124,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
     );
   };
 
-  const clearCart = () => {
-    setItems([]);
-  };
+const clearCart = useCallback(() => {
+  setItems([]);
+}, []);
 
   const cartCount = useMemo(
     () =>
@@ -159,6 +157,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         clearCart,
         cartCount,
         cartTotal,
+        isLoaded,
       }}
     >
       {children}

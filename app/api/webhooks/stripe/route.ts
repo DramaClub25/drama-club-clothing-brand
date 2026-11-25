@@ -46,16 +46,31 @@ export async function POST(request: Request) {
     }
 
     try {
-      const lineItems = await stripe.checkout.sessions.listLineItems(
-        session.id
-      );
+        const lineItems = await stripe.checkout.sessions.listLineItems(
+          session.id,
+          {
+            expand: ["data.price.product"],
+          }
+        );
 
-      const items = lineItems.data.map((item) => ({
-        name: item.description ?? "Store item",
-        quantity: item.quantity ?? 1,
-        amount_total: item.amount_total ?? 0,
-        currency: item.currency,
-      }));
+        const items = lineItems.data.map((item) => {
+          const product = item.price?.product;
+
+          const image =
+            typeof product === "object" &&
+            product !== null &&
+            "metadata" in product
+              ? product.metadata.image ?? null
+              : null;
+
+          return {
+            name: item.description ?? "Store item",
+            quantity: item.quantity ?? 1,
+            amount_total: item.amount_total ?? 0,
+            currency: item.currency,
+            image,
+          };
+        });
 
       const supabase = createAdminClient();
 

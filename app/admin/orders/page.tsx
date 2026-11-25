@@ -1,5 +1,5 @@
-
 import { createAdminClient } from "@/lib/supabase/admin";
+import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
@@ -18,6 +18,13 @@ export default async function OrdersPage() {
   return (
     <main className="min-h-screen bg-[#080808] px-6 py-10 text-white md:px-10">
       <div className="mx-auto max-w-7xl">
+        <Link
+          href="/admin"
+          className="mb-6 inline-flex items-center gap-2 text-xs text-white/50 transition hover:text-white"
+        >
+          ← Back to Dashboard
+        </Link>
+
         <p className="text-xs uppercase tracking-[0.3em] text-white/40">
           Drama Club Brand / Administration
         </p>
@@ -48,7 +55,14 @@ export default async function OrdersPage() {
               <tbody>
                 {orders?.map((order) => (
                   <tr key={order.id} className="border-b border-white/5 text-sm">
-                    <td className="p-5">{order.order_number}</td>
+                    <td className="p-5">
+                      <Link
+                        href={`/admin/orders/${order.id}`}
+                        className="font-medium transition hover:text-white/60"
+                      >
+                        {order.order_number} →
+                      </Link>
+                    </td>
                     <td className="p-5">
                       <div>{order.customer_name ?? "Guest"}</div>
                       <div className="mt-1 text-xs text-white/40">

@@ -1,5 +1,6 @@
 
 import Link from "next/link";
+import { createAdminClient } from "@/lib/supabase/admin";
 import {
   LayoutDashboard,
   ShoppingBag,
@@ -27,50 +28,6 @@ const navigation = [
   { label: "Analytics", href: "/admin/analytics", icon: ChartNoAxesCombined },
 ];
 
-const stats = [
-  {
-    label: "Total Revenue",
-    value: "$5,240.00",
-    change: "+12.8%",
-    positive: true,
-    icon: DollarSign,
-  },
-  {
-    label: "Total Orders",
-    value: "128",
-    change: "+8.2%",
-    positive: true,
-    icon: ShoppingBag,
-  },
-  {
-    label: "Pending Orders",
-    value: "12",
-    change: "Needs attention",
-    positive: false,
-    icon: Clock,
-  },
-  {
-    label: "Customers",
-    value: "86",
-    change: "+5.4%",
-    positive: true,
-    icon: Users,
-  },
-];
-
-const orders = [
-  { id: "#DC-1048", customer: "Jordan Williams", date: "Nov 23, 2026", total: "$80.00", status: "Processing" },
-  { id: "#DC-1047", customer: "Taylor Johnson", date: "Nov 22, 2026", total: "$120.00", status: "Shipped" },
-  { id: "#DC-1046", customer: "Morgan Davis", date: "Nov 22, 2026", total: "$40.00", status: "Pending" },
-  { id: "#DC-1045", customer: "Alex Carter", date: "Nov 21, 2026", total: "$95.00", status: "Delivered" },
-  { id: "#DC-1044", customer: "Jamie Brown", date: "Nov 20, 2026", total: "$60.00", status: "Delivered" },
-];
-
-const products = [
-  { name: "Hyena in Black Hoodie Tee", category: "T-Shirts", sold: 42, revenue: "$1,680" },
-  { name: "Drama Club Signature Hoodie", category: "Hoodies", sold: 28, revenue: "$1,400" },
-  { name: "Coat of Arms Long Sleeve", category: "Shirts", sold: 19, revenue: "$1,140" },
-];
 
 function StatusBadge({ status }: { status: string }) {
   const styles: Record<string, string> = {
@@ -87,7 +44,111 @@ function StatusBadge({ status }: { status: string }) {
   );
 }
 
-export default function AdminDashboard() {
+export const dynamic = "force-dynamic";
+
+export default async function AdminDashboard() {
+  const supabase = createAdminClient();
+
+  const { data: orders, error } = await supabase
+    .from("orders")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Dashboard orders error:", error.message);
+  }
+
+  const allOrders = orders ?? [];
+
+  const paidOrders = allOrders.filter(
+    (order) => order.payment_status === "paid"
+  );
+
+  const productSales = paidOrders.flatMap((order) =>
+  (order.items ?? []).map((item: {
+    name: string;
+    quantity: number;
+    amount_total: number;
+  }) => ({
+    name: item.name,
+    quantity: item.quantity,
+    revenue: item.amount_total,
+  }))
+);
+
+  const totalRevenue = paidOrders.reduce(
+    (sum, order) => sum + order.total_amount,
+    0
+  );
+
+  const pendingOrders = allOrders.filter(
+    (order) => order.fulfillment_status === "unfulfilled"
+  ).length;
+
+  const customers = new Set(
+    allOrders
+      .map((order) => order.customer_email)
+      .filter(Boolean)
+  ).size;
+
+  const stats = [
+    {
+      label: "Total Revenue",
+      value: `$${(totalRevenue / 100).toLocaleString("en-US", {
+        minimumFractionDigits: 2,
+      })}`,
+      change: "All paid orders",
+      positive: true,
+      icon: DollarSign,
+    },
+    {
+      label: "Total Orders",
+      value: allOrders.length.toString(),
+      change: "All orders",
+      positive: true,
+      icon: ShoppingBag,
+    },
+    {
+      label: "Pending Orders",
+      value: pendingOrders.toString(),
+      change: "Needs attention",
+      positive: false,
+      icon: Clock,
+    },
+    {
+      label: "Customers",
+      value: customers.toString(),
+      change: "Unique customer emails",
+      positive: true,
+      icon: Users,
+    },
+  ];
+
+  const recentOrders = allOrders.slice(0, 5);
+
+  const salesByDay = Array.from({ length: 7 }, (_, index) => {
+    const date = new Date();
+    date.setHours(0, 0, 0, 0);
+    date.setDate(date.getDate() - (6 - index));
+
+    const nextDate = new Date(date);
+    nextDate.setDate(nextDate.getDate() + 1);
+
+    const revenue = paidOrders
+      .filter((order) => {
+        const createdAt = new Date(order.created_at);
+        return createdAt >= date && createdAt < nextDate;
+      })
+      .reduce((sum, order) => sum + order.total_amount, 0);
+
+    return {
+      label: date.toLocaleDateString("en-US", { weekday: "short" }),
+      revenue: revenue / 100,
+    };
+  });
+
+  const maxSales = Math.max(...salesByDay.map((day) => day.revenue), 1);
+
   return (
     <main className="min-h-screen bg-[#080808] text-white">
       <div className="flex min-h-screen">
@@ -184,7 +245,7 @@ export default function AdminDashboard() {
                   Store performance
                 </p>
                 <h2 className="mt-3 font-serif text-3xl md:text-4xl">
-                  Welcome Back.
+                  Ganzito
                 </h2>
                 <p className="mt-2 text-sm text-white/40">
                   Here's what's happening with your store.
@@ -260,19 +321,25 @@ export default function AdminDashboard() {
                 </div>
 
                 <div className="mt-10 flex h-52 items-end justify-between gap-3 border-b border-white/10 px-2">
-                  {[35, 55, 42, 75, 48, 90, 65].map((height, index) => (
-                    <div key={index} className="flex h-full flex-1 items-end">
+                  {salesByDay.map((day) => (
+                    <div
+                      key={day.label}
+                      className="flex h-full flex-1 items-end"
+                    >
                       <div
+                        title={`${day.label}: $${day.revenue.toFixed(2)}`}
                         className="w-full bg-white/80 transition hover:bg-white"
-                        style={{ height: `${height}%` }}
+                        style={{
+                          height: `${Math.max((day.revenue / maxSales) * 100, 2)}%`,
+                        }}
                       />
                     </div>
                   ))}
                 </div>
 
                 <div className="mt-4 flex justify-between text-[10px] text-white/30">
-                  {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day) => (
-                    <span key={day}>{day}</span>
+                  {salesByDay.map((day) => (
+                    <span key={day.label}>{day.label}</span>
                   ))}
                 </div>
 
@@ -366,25 +433,49 @@ export default function AdminDashboard() {
                   </thead>
 
                   <tbody>
-                    {orders.map((order) => (
-                      <tr
-                        key={order.id}
-                        className="border-b border-white/5 text-xs last:border-0 hover:bg-white/[0.02]"
-                      >
-                        <td className="px-6 py-5 font-medium">{order.id}</td>
-                        <td className="px-6 py-5 text-white/60">{order.customer}</td>
-                        <td className="px-6 py-5 text-white/40">{order.date}</td>
-                        <td className="px-6 py-5">{order.total}</td>
-                        <td className="px-6 py-5">
-                          <StatusBadge status={order.status} />
-                        </td>
-                        <td className="px-6 py-5 text-right">
-                          <button aria-label={`More options for ${order.id}`}>
+                    {recentOrders.map((order) => {
+                      const status =
+                        order.fulfillment_status === "unfulfilled"
+                          ? "Pending"
+                          : order.fulfillment_status === "processing"
+                          ? "Processing"
+                          : order.fulfillment_status === "shipped"
+                          ? "Shipped"
+                          : order.fulfillment_status === "delivered"
+                          ? "Delivered"
+                          : order.fulfillment_status;
+
+                      return (
+                        <tr
+                          key={order.id}
+                          className="border-b border-white/5 text-xs last:border-0 hover:bg-white/[0.02]"
+                        >
+                          <td className="px-6 py-5 font-medium">{order.order_number}</td>
+                          <td className="px-6 py-5 text-white/60">
+                            {order.customer_name ?? "Guest"}
+                          </td>
+                          <td className="px-6 py-5 text-white/40">
+                            {new Date(order.created_at).toLocaleDateString()}
+                          </td>
+                          <td className="px-6 py-5">
+                            ${(order.total_amount / 100).toFixed(2)}
+                          </td>
+                          <td className="px-6 py-5">
+                            <StatusBadge status={status} />
+                          </td>
+                          <td className="px-6 py-5 text-right">
                             <MoreHorizontal size={17} className="text-white/40" />
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                    {recentOrders.length === 0 && (
+                    <tr>
+                      <td colSpan={6} className="px-6 py-8 text-center text-white/40">
+                        No orders found yet.
+                      </td>
+                    </tr>
+                  )}
                   </tbody>
                 </table>
               </div>
@@ -399,37 +490,18 @@ export default function AdminDashboard() {
                 </p>
               </div>
 
-              <div className="divide-y divide-white/5">
-                {products.map((product, index) => (
-                  <div
-                    key={product.name}
-                    className="flex flex-wrap items-center justify-between gap-4 px-6 py-5"
-                  >
-                    <div className="flex items-center gap-4">
-                      <div className="flex h-10 w-10 items-center justify-center border border-white/10 bg-black">
-                        <Shirt size={18} className="text-white/50" />
-                      </div>
-                      <div>
-                        <p className="text-xs font-medium">{product.name}</p>
-                        <p className="mt-1 text-[10px] text-white/40">
-                          {product.category}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-8 text-right">
-                      <div>
-                        <p className="text-xs">{product.sold}</p>
-                        <p className="mt-1 text-[10px] text-white/30">Sold</p>
-                      </div>
-                      <div>
-                        <p className="text-xs">{product.revenue}</p>
-                        <p className="mt-1 text-[10px] text-white/30">Revenue</p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+            <div className="px-6 py-10 text-center">
+              <Package
+                size={24}
+                className="mx-auto text-white/30"
+              />
+              <p className="mt-3 text-xs text-white/50">
+                Product sales data will appear here.
+              </p>
+              <p className="mt-1 text-[10px] text-white/30">
+                Complete orders will populate this section.
+              </p>
+            </div>
             </div>
 
             {/* FOOTER */}

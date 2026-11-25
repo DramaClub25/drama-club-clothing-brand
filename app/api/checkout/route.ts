@@ -52,26 +52,37 @@ export async function POST(request: Request) {
             unit_amount: Math.round(product.price * 100),
             product_data: {
               name: product.name,
-              ...(item.size
-                ? { description: `Size: ${item.size}` }
-                : {}),
+              description: item.size
+                ? `Size: ${item.size}`
+                : undefined,
+              metadata: {
+                image: product.image,
+                product_id: product.id,
+              },
             },
           },
         };
       });
 
-    const session = await stripe.checkout.sessions.create({
-      mode: "payment",
-      line_items: lineItems,
-      shipping_address_collection: {
-        allowed_countries: ["US"],
-      },
-      phone_number_collection: {
-        enabled: true,
-      },
-      success_url: `${new URL(request.url).origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${new URL(request.url).origin}/checkout`,
-    });
+const session = await stripe.checkout.sessions.create({
+  mode: "payment",
+  line_items: lineItems,
+
+  wallet_options: {
+    link: {
+      display: "never",
+    },
+  },
+
+  shipping_address_collection: {
+    allowed_countries: ["US"],
+  },
+  phone_number_collection: {
+    enabled: true,
+  },
+  success_url: `${new URL(request.url).origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+  cancel_url: `${new URL(request.url).origin}/checkout`,
+});
 
     return NextResponse.json({
       url: session.url,
