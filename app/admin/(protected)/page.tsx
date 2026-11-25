@@ -19,6 +19,7 @@ import {
   Plus,
   Shirt,
 } from "lucide-react";
+import LogoutButton from "@/components/admin/LogoutButton";
 
 const navigation = [
   { label: "Overview", href: "/admin", icon: LayoutDashboard, active: true },
@@ -229,9 +230,7 @@ export default async function AdminDashboard() {
               <button aria-label="Notifications" className="text-white/50 hover:text-white">
                 <Bell size={19} />
               </button>
-              <div className="flex h-9 w-9 items-center justify-center rounded-full border border-white/20 bg-white/10 text-xs">
-                DC
-              </div>
+              <LogoutButton />
             </div>
           </header>
 

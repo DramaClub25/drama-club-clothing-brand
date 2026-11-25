@@ -1,3 +1,5 @@
+
+import "server-only";
 import { createClient } from "@supabase/supabase-js";
 
 export function createAdminClient() {
@@ -7,9 +9,6 @@ export function createAdminClient() {
   if (!supabaseUrl || !supabaseSecretKey) {
     throw new Error("Missing Supabase server environment variables.");
   }
-
-  console.log("Supabase URL:", supabaseUrl);
-console.log("Secret key loaded:", supabaseSecretKey.startsWith("sb_secret_"));
 
   return createClient(supabaseUrl, supabaseSecretKey, {
     auth: {
