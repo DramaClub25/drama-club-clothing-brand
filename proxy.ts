@@ -9,15 +9,6 @@ export async function proxy(request: NextRequest) {
     request,
   });
 
-  console.log(
-  "Supabase URL exists:",
-  !!process.env.NEXT_PUBLIC_SUPABASE_URL
-);
-
-console.log(
-  "Supabase publishable key exists:",
-  !!process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
-);
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,

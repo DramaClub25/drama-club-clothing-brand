@@ -26,7 +26,7 @@ export default function ForgotPasswordPage() {
     const { error } = await supabase.auth.resetPasswordForEmail(
       email,
       {
-        redirectTo: `${window.location.origin}/admin/reset-password`,
+        redirectTo: "https://www.dramaclubbrand.com/admin/reset-password",
       }
     );
 
