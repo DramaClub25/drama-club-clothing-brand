@@ -1,5 +1,5 @@
-
 import Image from "next/image";
+import Link from "next/link";
 
 export default function UnderConstruction() {
   return (
@@ -36,10 +36,21 @@ export default function UnderConstruction() {
         <p className="mt-12 text-xs uppercase tracking-[0.35em] text-[#c8a84e]">
           Plays on the Stage of Life.
         </p>
+<br></br>
+        <Link
+          href="/admin/login"
+          className="text-[10px] uppercase tracking-[0.2em] text-white/25 transition hover:text-[#c8a84e]"
+        >
+          Admin Login
+        </Link>
 
-        <div className="mt-16 text-[10px] uppercase tracking-[0.25em] text-white/30">
+      <div className="mt-16 flex flex-col items-center gap-5">
+        <div className="text-[10px] uppercase tracking-[0.25em] text-white/30">
           © {new Date().getFullYear()} Drama Club Brand
         </div>
+
+
+      </div>
       </div>
     </main>
   );

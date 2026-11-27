@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
+
 export default function Footer() {
   return (
     <footer className="bg-black text-white">
@@ -32,6 +33,12 @@ export default function Footer() {
 
               <Link href="/story" className="transition hover:text-white">
                 Our Story
+              </Link>
+              <Link
+                href="/admin/login"
+                className="transition hover:text-white"
+              >
+                Admin Login
               </Link>
             </nav>
           </div>
