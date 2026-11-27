@@ -3,9 +3,21 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function proxy(request: NextRequest) {
+
+  
   let supabaseResponse = NextResponse.next({
     request,
   });
+
+  console.log(
+  "Supabase URL exists:",
+  !!process.env.NEXT_PUBLIC_SUPABASE_URL
+);
+
+console.log(
+  "Supabase publishable key exists:",
+  !!process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+);
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
