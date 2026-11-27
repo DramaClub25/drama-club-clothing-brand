@@ -8,7 +8,6 @@ import { createClient } from "@/lib/supabase/client";
 
 export default function ResetPasswordPage() {
   const router = useRouter();
-  const supabase = createClient();
 
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -23,6 +22,8 @@ export default function ResetPasswordPage() {
 
     setError("");
     setMessage("");
+
+    const supabase = createClient();
 
     if (password.length < 8) {
       setError("Your password must be at least 8 characters.");
