@@ -1,18 +1,18 @@
 
-import { createAdminClient } from "@/lib/supabase/admin"
-import Image from "next/image"
+import { createAdminClient } from "@/lib/supabase/admin";
+import Image from "next/image";
 import Link from "next/link";
+import DeleteProductButton from "./DeleteProductButton";
 
-
-export const dynamic = "force-dynamic"
+export const dynamic = "force-dynamic";
 
 export default async function ProductsPage() {
-  const supabase = createAdminClient()
+  const supabase = createAdminClient();
 
   const { data: products, error } = await supabase
     .from("products")
     .select("*")
-    .order("created_at", { ascending: false })
+    .order("created_at", { ascending: false });
 
   if (error) {
     return (
@@ -22,18 +22,19 @@ export default async function ProductsPage() {
           Unable to load products: {error.message}
         </p>
       </div>
-    )
+    );
   }
 
   return (
     <div className="space-y-6 p-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
-                <Link
+        <Link
           href="/admin"
           className="mb-6 inline-flex items-center gap-2 text-xs text-white/50 transition hover:text-white"
         >
           ← Back to Dashboard
         </Link>
+
         <div>
           <h1 className="text-2xl font-semibold">Products</h1>
           <p className="mt-1 text-sm text-gray-500">
@@ -41,12 +42,12 @@ export default async function ProductsPage() {
           </p>
         </div>
 
-        <button
-          disabled
-          className="rounded-lg bg-black px-4 py-2 text-sm font-medium text-white opacity-60"
+        <Link
+          href="/admin/products/new"
+          className="rounded-lg bg-white px-4 py-2 text-sm font-medium text-black transition hover:bg-gray-200"
         >
-          + Add Product (Coming Soon)
-        </button>
+          + Add Product
+        </Link>
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
@@ -68,7 +69,7 @@ export default async function ProductsPage() {
           <p className="text-sm text-gray-500">Total Stock</p>
           <p className="mt-2 text-2xl font-semibold">
             {products.reduce(
-              (total, product) => total + product.stock_quantity,
+              (total, product) => total + (product.stock_quantity || 0),
               0
             )}
           </p>
@@ -85,6 +86,7 @@ export default async function ProductsPage() {
                 <th className="px-4 py-3 font-medium">Price</th>
                 <th className="px-4 py-3 font-medium">Stock</th>
                 <th className="px-4 py-3 font-medium">Status</th>
+                <th className="px-4 py-3 font-medium">Actions</th>
               </tr>
             </thead>
 
@@ -92,7 +94,10 @@ export default async function ProductsPage() {
               {products.map((product) => (
                 <tr key={product.id}>
                   <td className="px-4 py-3">
-                    <div className="flex items-center gap-3">
+                    <Link
+                      href={`/admin/products/${product.id}`}
+                      className="group flex items-center gap-3"
+                    >
                       <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-gray-100">
                         {product.image ? (
                           <Image
@@ -100,21 +105,25 @@ export default async function ProductsPage() {
                             alt={product.name}
                             fill
                             sizes="48px"
-                            className="object-cover"
+                            className="object-cover transition group-hover:scale-105"
                           />
                         ) : null}
                       </div>
 
                       <div className="min-w-0">
-                        <p className="font-medium">{product.name}</p>
+                        <p className="font-medium transition group-hover:text-white group-hover:underline">
+                          {product.name}
+                        </p>
                         <p className="text-xs text-gray-500">
                           {product.id}
                         </p>
                       </div>
-                    </div>
+                    </Link>
                   </td>
 
-                  <td className="px-4 py-3">{product.category}</td>
+                  <td className="px-4 py-3">
+                    {product.category}
+                  </td>
 
                   <td className="px-4 py-3">
                     ${Number(product.price).toFixed(2)}
@@ -135,13 +144,29 @@ export default async function ProductsPage() {
                       {product.is_active ? "Active" : "Inactive"}
                     </span>
                   </td>
+
+                  <td className="px-4 py-3">
+                    <div className="flex items-center gap-2">
+                      <Link
+                        href={`/admin/products/${product.id}/edit`}
+                        className="inline-flex items-center rounded-lg border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-medium text-white/80 transition hover:border-white/30 hover:bg-white/10 hover:text-white"
+                      >
+                        Edit
+                      </Link>
+
+                      <DeleteProductButton
+                        productId={product.id}
+                        productName={product.name}
+                      />
+                    </div>
+                  </td>
                 </tr>
               ))}
 
               {products.length === 0 && (
                 <tr>
                   <td
-                    colSpan={5}
+                    colSpan={6}
                     className="px-4 py-10 text-center text-gray-500"
                   >
                     No products found.
@@ -153,5 +178,5 @@ export default async function ProductsPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }
